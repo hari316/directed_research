@@ -1,0 +1,10 @@
+DATABASE USED:
+
+1) Song data set:
+http://static.echonest.com/millionsongsubset_full.tar.gz  
+
+2) Song Meta dataset:
+http://labrosa.ee.columbia.edu/millionsong/sites/default/files/AdditionalFiles/track_metadata.db
+
+3) For similar artist dataset: 
+http://www.ee.columbia.edu/~thierry/artist_similarity.db
