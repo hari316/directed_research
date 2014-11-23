@@ -3,16 +3,17 @@ __author__ = 'Hari'
 from db import sql_utils
 from db import redis_utils
 import cPickle
-
+from stemming.porter2 import stem
 
 class RedisContext(object):
 
     ARTIST_CONTEXT_KEY = 'ARTIST_CONTEXT'
     META_CONTEXT_KEY = 'META_CONTEXT'
     LYRICS_CONTEXT_KEY = 'LYRICS_CONTEXT'
-    lyrics_path = '/Users/dmd/Documents/dr/mxm_dataset.db'
-    song_meta_path = '/Users/dmd/Documents/dr/track_metadata.db'
-    artist_path = '/Users/dmd/Documents/dr/artist_similarity.db'
+    root_path = '/Users/dmd/Documents/hari316/github/directed_research/song_search_engine/resource'
+    lyrics_path = root_path + '/mxm_dataset.db'
+    song_meta_path = root_path + '/track_metadata.db'
+    artist_path = root_path + '/artist_similarity.db'
 
     def __init__(self):
         self.redis_conn = redis_utils.get_redis_connection()
@@ -38,13 +39,27 @@ class RedisContext(object):
         """Function stores Song Lyrics Context into redis cache."""
 
         track_ids = self.__get_all_track_id()
-        #meta_info = get_meta_info(meta_conn)
+        #meta_info = self.__get_meta_info(meta_conn)
         lyrics_dict = dict()
+
+        # remove boring punctuation and weird signs
+        punctuation = (',', "'", '"', ",", ';', ':', '.', '?', '!', '(', ')',
+                       '{', '}', '/', '\\', '_', '|', '-', '@', '#', '*')
 
         for track_id in track_ids:
             tid = str(','.join(track_id))
             #print "Track ID: {0}".format(tid)
             lyrics_dict[tid] = self.__get_song_lyrics(tid)
+            meta_info = self.__get_meta_info(tid)
+            artist_name = meta_info['artist_name'].lower().split(' ')
+            title = meta_info['title'].lower().split(' ')
+            stemmed_title = []
+            for word in title:
+                for p in punctuation:
+                    word = word.replace(p,'')
+                stemmed_title.append(stem(word))
+            lyrics_dict[tid].extend(artist_name + stemmed_title)
+
 
         if self.redis_conn.set(self.lyrics_key, cPickle.dumps(lyrics_dict)):
             print "INFO:: Lyrics details successfully stored in redis cache."
