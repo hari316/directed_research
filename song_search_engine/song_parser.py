@@ -2,9 +2,12 @@ __author__ = 'Hari'
 import json
 import time
 from backends import redis_backend
-from flask import Flask
-app = Flask(__name__)
+#from flask import Flask
+from flask import Flask, render_template, request
+from flask import jsonify
 
+app = Flask(__name__)
+#api = restful.Api(app)
 
 @app.route("/")
 def test_running():
@@ -77,15 +80,17 @@ def get_all_song_lyrics():
     return json.dumps(lyrics)
     #return str(lyrics)
 
+@app.route("/song_details/", methods=['GET', 'PUT','POST'])
+def get_all_song_details():
+    start_time = time.time()
+    #print song_ids
+    print jsonify(request.get_json(force=True)) 
+    return "HELLO"
 
 parser = redis_backend.RedisContext()
 
 if __name__ == '__main__':
+
     app.run(host='0.0.0.0')
     print "SONG REST SERVICE IS RUNNING .... "
-
-
-
-
-
 
