@@ -2,7 +2,6 @@ __author__ = 'Hari'
 import json
 import time
 from backends import redis_backend
-#from flask import Flask
 from flask import Flask, request
 
 app = Flask(__name__)
