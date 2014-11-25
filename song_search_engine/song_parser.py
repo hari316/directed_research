@@ -3,8 +3,7 @@ import json
 import time
 from backends import redis_backend
 #from flask import Flask
-from flask import Flask, render_template, request
-from flask import jsonify
+from flask import Flask, request
 
 app = Flask(__name__)
 #api = restful.Api(app)
