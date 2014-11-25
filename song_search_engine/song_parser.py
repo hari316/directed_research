@@ -29,7 +29,7 @@ def get_song_lyrics(song_id):
     else:
         return "INVALID SONG_ID"
 
-@app.route("/song_info/<song_id>")
+#@app.route("/song_info/<song_id>")
 def get_song_info(song_id):
     start_time = time.time()
     print "SONG ID: " + song_id
@@ -48,7 +48,7 @@ def get_song_info(song_id):
         result['similar_track'] = similar_info['similar_track']
 
         print result.keys()
-        print " ------- EXECUTION TIME ELAPSED :: {0} SECONDS -------".format(time.time() - start_time)
+       #print " ------- EXECUTION TIME ELAPSED :: {0} SECONDS -------".format(time.time() - start_time)
         return str(result)
     else:
         return "INVALID SONG_ID"
@@ -80,12 +80,17 @@ def get_all_song_lyrics():
     return json.dumps(lyrics)
     #return str(lyrics)
 
-@app.route("/song_details/", methods=['GET', 'PUT','POST'])
+@app.route("/song_info", methods=['GET', 'POST'])
 def get_all_song_details():
     start_time = time.time()
-    #print song_ids
-    print jsonify(request.get_json(force=True)) 
-    return "HELLO"
+    song_ids = request.get_json(force=True)
+    result = {}
+    if 'ids' in song_ids:
+	for id in song_ids['ids']:
+	    result[id] = get_song_info(id)
+
+    print " ------- EXECUTION TIME ELAPSED :: {0} SECONDS -------".format(time.time() - start_time)
+    return json.dumps(result)
 
 parser = redis_backend.RedisContext()
 
